@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stamm.</title>
+<meta name="description" content="stamm. · Roblox scripter building clean, reliable systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#0b0d12;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+    --card:#ffffff;
+    --blue:#1d4ed8;
+    --blue-soft:#e8effd;
+    --blue-dark:#0b1b3f;
+    --violet:#7c3aed;
+    --violet-soft:#f2ebfe;
+    --cyan:#06b6d4;
+    --cyan-soft:#e2f9fc;
+    --pink:#ec4899;
+    --pink-soft:#fdeaf3;
+    --amber:#f59e0b;
+    --amber-soft:#fef3e0;
+    --radius:10px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--blue-soft); color:var(--blue);}
+
+  :focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:3px;
+    border-radius:3px;
+  }
+
+  header{
+    position:sticky; top:0; z-index:90;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    max-width:1160px; margin:0 auto; padding:20px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:2px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:1.3rem; letter-spacing:-0.01em;
+  }
+  .brand .dot{
+    background:linear-gradient(135deg, var(--blue), var(--violet) 60%, var(--pink));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:var(--violet);
+  }
+  .navlinks{display:flex; gap:2.2rem; list-style:none; margin:0; padding:0;}
+  .navlinks a{
+    font-size:0.88rem; font-weight:600; color:var(--muted);
+    transition:color .15s ease;
+    text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .navlinks a:hover{color:var(--ink);}
+  .navtoggle{display:none; background:none; border:none; cursor:pointer; padding:6px;}
+  .navtoggle span{display:block; width:22px; height:2px; background:var(--ink); margin:5px 0; border-radius:2px;}
+
+  section{max-width:1160px; margin:0 auto; padding:110px 32px; scroll-margin-top:84px;}
+  section + section{padding-top:0;}
+  .hero + section{padding-top:70px;}
+  .section-head{margin-bottom:52px;}
+  .section-head.center{text-align:center;}
+  .eyebrow{
+    display:block; font-family:'Space Grotesk', sans-serif; font-size:0.78rem;
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--blue);
+    margin-bottom:10px; font-weight:600;
+  }
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif; font-weight:700; letter-spacing:-0.02em; margin:0;}
+  h2{font-size:2.1rem;}
+  .lede{color:var(--muted); font-size:1rem; max-width:560px; line-height:1.65; margin:0;}
+  .section-head.center .lede{margin:14px auto 0;}
+
+  /* fill-in placeholder styling */
+  .fillme{
+    color:var(--muted);
+    font-style:italic;
+    border-left:2px dashed var(--line);
+    padding-left:14px;
+  }
+
+  /* HERO */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    padding-top:65px; padding-bottom:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(480px 380px at 15% 20%, rgba(29,78,216,0.14), transparent 70%),
+      radial-gradient(520px 420px at 85% 15%, rgba(124,58,237,0.13), transparent 70%),
+      radial-gradient(460px 380px at 50% 95%, rgba(236,72,153,0.10), transparent 70%),
+      radial-gradient(400px 340px at 90% 80%, rgba(6,182,212,0.10), transparent 70%);
+  }
+  .hero > div{position:relative; z-index:1;}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--violet); font-size:0.8rem; font-weight:700;
+    padding:0; margin-bottom:26px;
+    text-transform:uppercase; letter-spacing:0.06em;
+  }
+  .badge-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:linear-gradient(135deg, var(--blue), var(--violet));
+    box-shadow:0 0 0 4px var(--violet-soft);
+    animation:pulseDot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseDot{
+    0%,100%{box-shadow:0 0 0 4px var(--violet-soft);}
+    50%{box-shadow:0 0 0 7px var(--violet-soft);}
+  }
+  .hero-title{
+    font-size:clamp(3.4rem, 9vw, 6rem);
+    line-height:0.98;
+    margin-bottom:38px;
+    background:linear-gradient(120deg, var(--ink) 35%, var(--blue) 60%, var(--violet) 80%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:var(--ink);
+  }
+  .hero-title .dot{
+    background:linear-gradient(135deg, var(--pink), var(--amber));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:var(--pink);
+  }
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap; justify-content:center;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:13px 24px; border-radius:8px; font-weight:600; font-size:0.9rem;
+    border:1px solid transparent; cursor:pointer; transition:opacity .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:linear-gradient(120deg, var(--blue), var(--violet)); color:#fff;}
+  .btn-primary:hover{box-shadow:0 10px 24px -8px rgba(124,58,237,0.55);}
+  .btn-ghost{background:#fff; color:var(--ink); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--violet); color:var(--violet);}
+
+  /* ABOUT */
+  .about-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:start;}
+  .about-copy p{color:var(--muted); line-height:1.75; font-size:1rem; margin:0 0 16px;}
+  .about-copy strong{color:var(--ink);}
+  .skills{display:flex; flex-wrap:wrap; gap:10px; align-content:flex-start;}
+  .skill-pill{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:9px 16px; border:1px solid var(--line); border-radius:999px; background:var(--card);
+    font-weight:600; font-size:0.85rem;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .skill-pill:hover{border-color:var(--blue); background:var(--blue-soft); color:var(--blue);}
+  .skill-pill:nth-child(5n+1):hover{border-color:var(--blue); background:var(--blue-soft); color:var(--blue);}
+  .skill-pill:nth-child(5n+2):hover{border-color:var(--violet); background:var(--violet-soft); color:var(--violet);}
+  .skill-pill:nth-child(5n+3):hover{border-color:var(--cyan); background:var(--cyan-soft); color:#0891a8;}
+  .skill-pill:nth-child(5n+4):hover{border-color:var(--pink); background:var(--pink-soft); color:var(--pink);}
+  .skill-pill:nth-child(5n+5):hover{border-color:var(--amber); background:var(--amber-soft); color:#b3760a;}
+  .pill-icon{width:15px; height:15px; flex-shrink:0;}
+  .li-icon{width:15px; height:15px; flex-shrink:0; display:inline-block; margin-top:2px;}
+
+  /* SCOPE */
+  .scope-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .scope-col{background:var(--card); padding:30px;}
+  .scope-col-head{display:flex; align-items:center; gap:12px; margin-bottom:20px;}
+  .scope-mark{
+    width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:0.85rem; flex-shrink:0; color:#fff;
+  }
+  .scope-mark svg{width:15px; height:15px;}
+  .scope-col.yes .scope-mark{background:linear-gradient(135deg, var(--blue), var(--cyan));}
+  .scope-col.no .scope-mark{background:linear-gradient(135deg, var(--pink), var(--amber));}
+  .scope-col-head h3{font-size:1.02rem;}
+  .scope-col ul{list-style:none; margin:0; padding:0;}
+  .scope-col li{
+    display:flex; gap:10px; padding:9px 0; border-top:1px solid var(--line);
+    font-size:0.9rem; color:var(--muted); line-height:1.5;
+  }
+  .scope-col li:first-child{border-top:none;}
+  .scope-col.yes li b{color:var(--blue); flex-shrink:0;}
+  .scope-col.no li b{color:var(--pink); flex-shrink:0;}
+
+  /* SYSTEMS / VIDEO EMBEDS */
+  .video-grid{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:18px;
+    max-width:680px; margin:0 auto;
+  }
+  .video-card{
+    position:relative;
+    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--card);
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .video-card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px; z-index:2;
+    background:linear-gradient(90deg, var(--blue), var(--violet));
+  }
+  .video-card:nth-child(4n+2)::before{background:linear-gradient(90deg, var(--violet), var(--pink));}
+  .video-card:nth-child(4n+3)::before{background:linear-gradient(90deg, var(--cyan), var(--blue));}
+  .video-card:nth-child(4n+4)::before{background:linear-gradient(90deg, var(--pink), var(--amber));}
+  .video-card:hover{transform:translateY(-3px); border-color:var(--blue);}
+  .video-frame-wrap{position:relative; width:100%; padding-top:56.25%; background:var(--blue-dark);}
+  .video-frame-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .video-caption{padding:13px 14px;}
+  .video-caption p{margin:0; font-weight:600; font-size:0.85rem;}
+  .video-caption span{font-size:0.72rem; color:var(--muted);}
+
+  /* COMMISSIONS */
+  .pricing-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:70px;}
+  .price-card{background:var(--card); padding:32px;}
+  .price-card.multi{background:linear-gradient(155deg, var(--blue-dark) 0%, #1e1147 65%, #3b1650 100%); color:#fff;}
+  .price-card.multi .price-desc, .price-card.multi .price-note{color:#a8b6da;}
+  .price-card.multi li{color:#c6d0ec;}
+  .price-card.multi h3, .price-card.multi .price-tag-label{color:#fff;}
+  .price-card.multi .price-pill{background:linear-gradient(120deg, #6ea1ff, #d69bff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .price-tag-label{font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--blue); font-weight:700;}
+  .price-card h3{font-size:1.2rem; margin:6px 0 2px;}
+  .price-pill{
+    display:inline-block; margin:16px 0 4px; font-weight:800; font-size:1.4rem;
+    font-family:'Space Grotesk',sans-serif;
+    background:linear-gradient(120deg, var(--blue), var(--cyan));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .price-note{color:var(--muted); font-size:0.8rem; margin:0 0 18px;}
+  .price-desc{color:var(--muted); line-height:1.6; font-size:0.92rem; margin-bottom:20px;}
+  .price-card ul{list-style:none; margin:0; padding:0;}
+  .price-card li{display:flex; gap:9px; align-items:flex-start; padding:6px 0; font-size:0.88rem; color:var(--muted);}
+  .price-card li b{color:var(--blue); flex-shrink:0;}
+  .price-card.multi li b{color:#6ea1ff;}
+
+  .info-block{display:flex; gap:16px; margin-bottom:40px;}
+  .info-mark{
+    width:38px; height:38px; border-radius:9px; background:linear-gradient(135deg, var(--blue-soft), var(--violet-soft)); color:var(--violet);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .info-mark svg{width:19px; height:19px;}
+  .info-block h4{font-size:1rem; margin-bottom:6px;}
+  .info-block p{color:var(--muted); line-height:1.65; font-size:0.92rem; margin:0;}
+
+  .pay-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:26px 0 50px;}
+  .pay-card{border:1px solid var(--line); border-radius:var(--radius); padding:22px; background:var(--card);}
+  .pay-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .pay-mark{
+    width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:0.9rem; flex-shrink:0;
+  }
+  .pay-head b{display:block; font-size:0.95rem;}
+  .pay-head span{font-size:0.75rem; color:var(--muted);}
+  .pay-card p{margin:0; color:var(--muted); font-size:0.85rem; line-height:1.55;}
+
+  .two-col-info{display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:0;}
+
+  /* CONTACT */
+  .contact-card{
+    position:relative; overflow:hidden;
+    background:linear-gradient(155deg, var(--blue-dark) 0%, #1e1147 60%, #3b1650 100%); color:#fff;
+    border-radius:16px; padding:60px 40px;
+  }
+  .contact-card::before{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(360px 280px at 90% -10%, rgba(236,72,153,0.18), transparent 70%),
+      radial-gradient(300px 260px at -10% 110%, rgba(6,182,212,0.15), transparent 70%);
+  }
+  .contact-card > *{position:relative; z-index:1;}
+  .contact-top{display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; align-items:end; margin-bottom:44px;}
+  .contact-card h2{color:#fff;}
+  .contact-card .lede{color:#a8b6da; margin-top:14px;}
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .contact-item{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:16px 20px; text-align:left;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .contact-item:hover{background:rgba(255,255,255,0.1); border-color:var(--blue);}
+  .contact-left{display:flex; align-items:center; gap:14px;}
+  .contact-mark{width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; color:#fff; font-weight:800;}
+  .contact-left div span{display:block; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:#8b98bd;}
+  .contact-left div b{font-size:0.98rem;}
+  .contact-arrow{color:#8b98bd; font-weight:700;}
+  .contact-highlight{
+    display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:600;
+    color:#6ea1ff; margin-top:18px;
+  }
+
+  footer{
+    max-width:1160px; margin:0 auto; padding:36px 32px 60px;
+    display:flex; align-items:center; justify-content:space-between;
+    color:var(--muted); font-size:0.85rem; border-top:1px solid var(--line); margin-top:40px;
+  }
+  footer a{font-weight:700; display:flex; align-items:center; gap:6px;}
+  footer a:hover{color:var(--blue);}
+
+  @media (max-width:860px){
+    .navlinks{
+      position:fixed; top:65px; left:0; right:0; bottom:0;
+      background:#fff; flex-direction:column; padding:30px 32px; gap:0;
+      transform:translateX(100%); transition:transform .25s ease; z-index:80;
+    }
+    .navlinks.open{transform:translateX(0);}
+    .navlinks a{display:block; padding:16px 0; border-bottom:1px solid var(--line); font-size:1.05rem;}
+    .navtoggle{display:block;}
+    .about-grid, .scope-grid, .pricing-grid, .contact-grid, .two-col-info, .contact-top{grid-template-columns:1fr;}
+    .video-grid{grid-template-columns:1fr 1fr;}
+    section{padding:70px 20px;}
+    .hero{padding-top:70px; min-height:calc(100vh - 65px);}
+    .hero + section{padding-top:44px;}
+    footer{flex-direction:column; gap:14px; text-align:center;}
+  }
+  @media (max-width:560px){
+    .video-grid, .pay-grid, .contact-grid{grid-template-columns:1fr;}
+  }
+
+  /* ---------- ANIMATIONS ---------- */
+
+  /* Hero: fades + rises in on page load, staggered piece by piece */
+  @keyframes heroIn{
+    from{opacity:0; transform:translateY(18px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .hero .badge,
+  .hero .hero-title,
+  .hero .hero-actions{
+    opacity:0;
+    animation:heroIn .7s cubic-bezier(.16,.8,.24,1) forwards;
+  }
+  .hero .badge{animation-delay:.05s;}
+  .hero .hero-title{animation-delay:.15s;}
+  .hero .hero-actions{animation-delay:.3s;}
+
+  /* Scroll reveal: anything with .reveal fades + rises in once it enters view */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);
+  }
+  .reveal.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+  /* Stagger direct children of a reveal-group as they come into view */
+  .reveal-group.is-visible > *{
+    animation:heroIn .6s cubic-bezier(.16,.8,.24,1) forwards;
+  }
+  .reveal-group > *{opacity:0;}
+  .reveal-group.is-visible > *:nth-child(1){animation-delay:0s;}
+  .reveal-group.is-visible > *:nth-child(2){animation-delay:.08s;}
+  .reveal-group.is-visible > *:nth-child(3){animation-delay:.16s;}
+  .reveal-group.is-visible > *:nth-child(4){animation-delay:.24s;}
+
+  /* Nav underline sweep on hover */
+  .navlinks a{position:relative;}
+  .navlinks a::after{
+    content:''; position:absolute; left:0; right:100%; bottom:-4px; height:2px;
+    background:var(--blue); transition:right .25s ease;
+  }
+  .navlinks a:hover::after{right:0;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important; animation:none !important;}
+    .reveal, .reveal-group > *, .hero .badge, .hero .hero-title, .hero .hero-actions{
+      opacity:1 !important; transform:none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <a href="#top" class="brand">stamm<span class="dot">.</span></a>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#scope">Scope</a></li>
+      <li><a href="#systems">Showcase</a></li>
+      <li><a href="#commissions">Commissions</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="navtoggle" id="navtoggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <span class="badge"><span class="badge-dot"></span>Open for commissions</span>
+      <h1 class="hero-title">stamm<span class="dot">.</span></h1>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Commission Me</a>
+        <a href="#about" class="btn btn-ghost">View My Work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-grid reveal">
+      <div class="about-copy">
+        <span class="eyebrow" style="color:var(--blue);">About</span>
+        <h2 style="margin-bottom:22px;">Who I am</h2>
+        <p>I'm an experienced Roblox scripter, still trying to get a bit better at what I do every day. I like taking your ideas and actually turning them into something that works.</p>
+        <p>I focus on single systems rather than full games. That's where I can put in the most care and actually get it right.</p>
+        <p>My code stays clean and modular. Easy to expand, and still makes sense to me (or you) months after I'm done with it.</p>
+      </div>
+      <div>
+        <span class="eyebrow" style="margin-bottom:16px; display:block;">Skills</span>
+        <!-- EDIT: swap these pills for your own skills -->
+        <div class="skills">
+          <span class="skill-pill"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 3 12 8 18"></polyline><polyline points="16 6 21 12 16 18"></polyline></svg>Luau / Lua</span>
+          <span class="skill-pill"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1.5"></rect><rect x="3" y="14" width="18" height="6" rx="1.5"></rect><line x1="7" y1="7" x2="7.01" y2="7"></line><line x1="7" y1="17" x2="7.01" y2="17"></line></svg>Server Architecture</span>
+          <span class="skill-pill"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="4"></rect><line x1="7" y1="10" x2="7" y2="14"></line><line x1="5" y1="12" x2="9" y2="12"></line><circle cx="16" cy="10.5" r="1"></circle><circle cx="18.5" cy="13" r="1"></circle></svg>Gameplay Systems</span>
+          <span class="skill-pill"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path></svg>DataStore</span>
+          <span class="skill-pill"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line></svg>UI / Interface</span>
+          <span class="skill-pill"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a16 16 0 0 1 20 0"></path><path d="M5 12a11 11 0 0 1 14 0"></path><path d="M8.5 15.5a6 6 0 0 1 7 0"></path><circle cx="12" cy="19" r="1"></circle></svg>Networking</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCOPE -->
+  <section id="scope">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="color:var(--violet);">Scope</span>
+      <h2>What I work on</h2>
+    </div>
+    <div class="scope-grid reveal">
+      <div class="scope-col yes">
+        <div class="scope-col-head">
+          <span class="scope-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <h3>What I take on</h3>
+        </div>
+        <ul>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Shops</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Secure, modular DataStore</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Full UI scripting &amp; design</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Any UI-based system</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Gameplay mechanics like round systems</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Inventory systems</li>
+        </ul>
+      </div>
+      <div class="scope-col no">
+        <div class="scope-col-head">
+          <span class="scope-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>
+          <h3>What I don't</h3>
+        </div>
+        <ul>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></b>Complex combat systems (hitboxes, abilities, PvP balancing)</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></b>Full games built from scratch</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></b>Vehicle or driving systems</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></b>Heavy custom animation work</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYSTEMS / VIDEO DEMOS -->
+  <section id="systems">
+    <div class="section-head center reveal">
+      <span class="eyebrow" style="color:var(--cyan);">Showcase</span>
+      <h2>Systems in action</h2>
+      <p class="lede">Short clips of systems I've built. Edit the <code>videos</code> list in the code to swap in your own.</p>
+    </div>
+    <div class="video-grid reveal-group" id="videoGrid"></div>
+  </section>
+
+  <!-- COMMISSIONS -->
+  <section id="commissions">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="color:var(--amber);">Commissions</span>
+      <h2>Hire me</h2>
+    </div>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card">
+        <span class="price-tag-label">Small scope</span>
+        <h3>Single System</h3>
+        <div><span class="price-pill">From 15€</span></div>
+        <p class="price-note">or the equivalent in Robux</p>
+        <p class="price-desc">One standalone system or script: a shop, DataStore setup, UI, or custom tool.</p>
+        <ul>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>One focused system</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Revisions included</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Delivers in 3-7 days</li>
+        </ul>
+      </div>
+      <div class="price-card multi">
+        <span class="price-tag-label">Medium scope</span>
+        <h3>Multi-System</h3>
+        <div><span class="price-pill">From 70€</span></div>
+        <p class="price-note">or the equivalent in Robux · split across tasks</p>
+        <p class="price-desc">Multiple systems that work together: shop + inventory + save data, UI + gameplay mechanics, etc.</p>
+        <ul>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>2-4 connected systems</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Server and client side</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>Fully tested</li>
+          <li><b class="li-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></b>1-4 weeks, depending on complexity</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg></div>
+      <div>
+        <h4>Payment</h4>
+        <p>50% upfront, the rest on delivery.</p>
+      </div>
+    </div>
+
+    <div class="pay-grid reveal-group">
+      <div class="pay-card">
+        <div class="pay-head">
+          <span class="pay-mark" style="background:#003087;"><img src="https://cdn.simpleicons.org/paypal/ffffff" alt="PayPal" width="20" height="20"></span>
+          <!-- EDIT: replace with your PayPal handle/email -->
+          <div><b>PayPal</b><span class="fillme">your PayPal handle</span></div>
+        </div>
+        <p>Sent as goods and services. Send a message and I'll share the details.</p>
+      </div>
+      <div class="pay-card">
+        <div class="pay-head">
+          <span class="pay-mark" style="background:var(--ink);"><img src="https://cdn.simpleicons.org/roblox/ffffff" alt="Roblox" width="20" height="20"></span>
+          <span><b>Robux</b><span class="fillme" style="display:block;">your Roblox username</span></span>
+        </div>
+        <p>You cover the 30% Roblox tax, and the total must match the listed € value at the current DevEx rate. Pay via gamepass or group funds.</p>
+      </div>
+    </div>
+
+    <div class="two-col-info">
+      <div class="info-block" style="margin-bottom:0;">
+        <div class="info-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path><polyline points="9 12 11 14 15 10"></polyline></svg></div>
+        <div>
+          <h4>Ownership</h4>
+          <!-- EDIT: your ownership terms -->
+          <p>Once a task is paid for, the code is yours to keep, modify, and use however you like. I don't hold onto a copy or reuse it elsewhere.</p>
+        </div>
+      </div>
+      <div class="info-block" style="margin-bottom:0;">
+        <div class="info-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><polyline points="3 4 3 9 8 9"></polyline></svg></div>
+        <div>
+          <h4>Refunds</h4>
+          <!-- EDIT: your refund policy -->
+          <p>You can stop a project at any point; you only pay for the work that's already been delivered. If you've paid upfront on a 50/50 split, that half is refundable as long as I haven't started yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:640px; margin:46px auto 0;">
+      <div class="info-block" style="margin-bottom:0;">
+        <div class="info-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></div>
+        <div>
+          <h4>Availability</h4>
+          <!-- EDIT: your availability -->
+          <p>Discord is the fastest way to reach me. I usually reply within the hour. I don't have an email set up, so Discord is the only way to get in touch right now.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-card reveal">
+      <div class="contact-top">
+        <div>
+          <span class="eyebrow" style="color:#6ea1ff;">Contact</span>
+          <h2>Let's build something</h2>
+          <p class="lede">Message me on Discord with what you're building: the systems you need, your timeline, and a budget if you've got one in mind. That's where I'll reply fastest.</p>
+        </div>
+      </div>
+      <div class="contact-grid">
+        <a class="contact-item" href="https://discord.com/users/stamm." target="_blank" rel="noopener">
+          <div class="contact-left">
+            <span class="contact-mark" style="background:#5865F2;"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord" width="20" height="20"></span>
+            <div><span>Discord</span><b>stamm.</b></div>
+          </div>
+          <span class="contact-arrow">⧉</span>
+        </a>
+        <a class="contact-item" href="https://www.roblox.com/users/profile?username=EliaYTohjo" target="_blank" rel="noopener">
+          <div class="contact-left">
+            <span class="contact-mark" style="background:#fff;"><img src="https://cdn.simpleicons.org/roblox/0b1b3f" alt="Roblox" width="20" height="20"></span>
+            <div><span>Roblox</span><b>EliaYTohjo</b></div>
+          </div>
+          <span class="contact-arrow">→</span>
+        </a>
+      </div>
+      <div class="contact-highlight">↳ Discord gets the fastest reply, usually within the hour.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>© 2026 stamm.</span>
+  <a href="#top">↑ Back to top</a>
+</footer>
+
+<script>
+  // ---------------------------------------------------------------
+  // YOUTUBE EMBEDS - edit this list to add/remove/replace your clips.
+  // "id" is the YouTube video ID (the part after watch?v= or youtu.be/,
+  // or the ID in a /shorts/ link).
+  // "title" and "tag" are just labels shown under the video.
+  // ---------------------------------------------------------------
+  const videos = [
+    { id: "znrurvCMe-0", title: "Character Accessory Roll System based on Gakuran",    tag: "UI / Rarity" },
+    { id: "dQw4w9WgXcQ", title: "Shop + inventory",     tag: "UI / DataStore" },
+    { id: "dQw4w9WgXcQ", title: "NPC dialogue system",  tag: "Networking" },
+    { id: "dQw4w9WgXcQ", title: "Custom UI walkthrough", tag: "UI / Interface" }
+  ];
+
+  const grid = document.getElementById("videoGrid");
+  grid.innerHTML = videos.map(v => `
+    <div class="video-card">
+      <div class="video-frame-wrap">
+        <iframe
+          src="https://www.youtube.com/embed/${v.id}"
+          title="${v.title}"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-caption">
+        <p>${v.title}</p>
+        <span>${v.tag}</span>
+      </div>
+    </div>
+  `).join("");
+
+  // Mobile nav toggle
+  const navtoggle = document.getElementById("navtoggle");
+  const navlinks = document.getElementById("navlinks");
+  navtoggle.addEventListener("click", () => {
+    const isOpen = navlinks.classList.toggle("open");
+    navtoggle.setAttribute("aria-expanded", isOpen);
+  });
+  navlinks.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", () => {
+      navlinks.classList.remove("open");
+      navtoggle.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  // Scroll-reveal: fade + rise elements in once they enter the viewport.
+  // Anything with class "reveal" fades in as a whole; "reveal-group" fades
+  // in its direct children one after another (staggered).
+  const revealTargets = document.querySelectorAll(".reveal, .reveal-group");
+  if ("IntersectionObserver" in window && revealTargets.length){
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -60px 0px" });
+    revealTargets.forEach(el => observer.observe(el));
+  } else {
+    // Fallback: no IntersectionObserver support, just show everything.
+    revealTargets.forEach(el => el.classList.add("is-visible"));
+  }
+</script>
+
+</body>
+</html>
